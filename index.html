@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Assessment</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+        }
+        .section label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        #chartContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h1>ASSESSING YOUR LIFE BALANCE</h1>
+
+   <h3 style="font-family:fantacy;font-style:oblique;">"All wheel runs most smoothly when well balanced"</h3>
+
+   <h2 style="color:red;">REMEMBER</h2>
+       <p style="font-weight:bold">1.We all are unique. </p>
+       <p style="font-weight:bold">2.There is no 'right' or 'wrong'. </p>
+       <p style="font-weight:bold">3.Responses will vary depending on age and stage of life. </p> 
+    <form id="surveyForm">
+        <!-- Physical Health Section -->
+        <div class="section">
+            <h2>Physical Health</h2>
+            <label>1. I take responsibility of my physical health.</label>
+            <input type="number" name="physical1" min="0" max="10" required>
+            
+            <label>2. I eat balanced diet and workout at least three times a weak.</label>
+            <input type="number" name="physical2" min="0" max="10" required>
+            
+            <label>3. I'm free from illness.</label>
+            <input type="number" name="physical3" min="0" max="10" required>
+        </div>
+        
+        <!-- Social Health Section -->
+        <div class="section">
+            <h2>Social Health</h2>
+            <label>1.I have at least three people with whom I have a close trusting relationship.</label>
+            <input type="number" name="social1" min="0" max="10" required>
+            
+            <label>2. Not always I could resolve conflicts in all areas of my life</label>
+            <input type="number" name="social2" min="0" max="10" required>
+            
+            <label>3. I'm able to set and respect my own and others boundries.</label>
+            <input type="number" name="social3" min="0" max="10" required>
+        </div>
+        
+        <!-- Emotional Health Section -->
+        <div class="section">
+            <h2>Emotional Health</h2>
+            <label>1. I have a sense of control in my life and I am able to adopt to change.</label>
+            <input type="number" name="emotional1" min="0" max="10" required>
+            
+            <label>2. I perceive "problems" as opportunities for growth.</label>
+            <input type="number" name="emotional2" min="0" max="10" required>
+            
+            <label>3. I'm able to comfort or console myself when I am in trouble.</label>
+            <input type="number" name="emotional3" min="0" max="10" required>
+        </div>
+        
+        <!-- Intellectual Health Section -->
+        <div class="section">
+            <h2>Intellectual Health</h2>
+            <label>1. I don't enjoy learning new skills and information.</label>
+            <input type="number" name="intellectual1" min="0" max="10" required>
+            
+            <label>2. I commit time and energy to professional growth and self development.</label>
+            <input type="number" name="intellectual2" min="0" max="10" required>
+            
+            <label>3.  I'm filled with positive thoughts.</label>
+            <input type="number" name="intellectual3" min="0" max="10" required>
+        </div>
+        
+        <!-- Financial Health Section -->
+        <div class="section">
+            <h2>Financial Health</h2>
+            <label>1. My spending and saving habits reflect my values and beliefs.</label>
+            <input type="number" name="financial1" min="0" max="10" required>
+            
+            <label>2. I make best use of the means and take responsibility for my financial decisions.</label>
+            <input type="number" name="financial2" min="0" max="10" required>
+            
+            <label>3. I'm generally satisfied with my vacations/career.</label>
+            <input type="number" name="financial3" min="0" max="10" required>
+        </div>
+        
+        <!-- Spiritual Health Section -->
+        <div class="section">
+            <h2>Spiritual Health</h2>
+            <label>1. I know the purpose of my life.</label>
+            <input type="number" name="spiritual1" min="0" max="10" required>
+            
+            <label>2. I practice prayer, meditation and motivate myself for self-growth.</label>
+            <input type="number" name="spiritual2" min="0" max="10" required>
+            
+            <label>3. I trust others but can't forgive myself or others.</label>
+            <input type="number" name="spiritual3" min="0" max="10" required>
+        </div>
+        
+        <button type="submit">Submit</button>
+    </form>
+    
+    <canvas id="resultsChart" width="400" height="400"></canvas>
+    
+    <script>
+        document.getElementById('surveyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Calculate the total scores for each section
+            const form = event.target;
+            const sections = ['physical', 'social', 'emotional', 'intellectual', 'financial', 'spiritual'];
+            const scores = sections.map(section => {
+                return Array.from(form.querySelectorAll(`input[name^=${section}]`))
+                            .reduce((sum, input) => sum + parseInt(input.value), 0);
+            });
+            
+            // Define the result categories
+            const categories = ['Distressed', 'Struggling', 'Enduring', 'Managing', 'Succeeding', 'Thriving'];
+            
+            // Determine the category based on the total score
+            const totalScore = scores.reduce((sum, score) => sum + score, 0);
+            let category;
+            if (totalScore <= 18) category = categories[0];
+            else if (totalScore <= 36) category = categories[1];
+            else if (totalScore <= 54) category = categories[2];
+            else if (totalScore <= 72) category = categories[3];
+            else if (totalScore <= 90) category = categories[4];
+            else category = categories[5];
+            
+            // Display the pie chart
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: categories.map(cat => cat === category ? 1 : 0),
+                        backgroundColor: [
+                            'red', 'orange', 'yellow', 'green', 'blue', 'purple'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return `${categories[tooltipItem.dataIndex]}: ${tooltipItem.raw}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
